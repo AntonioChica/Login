@@ -25,43 +25,14 @@ export class AuthService {
     
     validateUser({username, password}: AuthPayloadDto){
       const findUser = fakeUsers.find((user) => user.username === username);
-      if (!findUser) return null;
+      if (!findUser) return false;
 
       if (password === findUser.password){
         const{password, ...user} = findUser;
         return this.jwtService.sign(user);
+      }else{
+        return false;
       }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // constructor(
-    //     private usersService: UsersService, 
-    //     private jwtService: JwtService,     //Servicio para tokens 
-    //   ) {}
-    
-    //   async signIn(
-    //     username: string,
-    //     pass: string,
-    //   ): Promise<{ access_token: string }> {
-    //     const user = await this.usersService.findOne(username);
-    //     if (user?.password !== pass) {
-    //       throw new UnauthorizedException();
-    //     }
-    //     const payload = { sub: user.id, username: user.username };
-    //     return {
-    //       access_token: await this.jwtService.signAsync(payload),
-    //     };
-    //   }
 }

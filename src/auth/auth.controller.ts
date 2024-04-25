@@ -1,9 +1,10 @@
-import { Controller, Post, Get, Body} from '@nestjs/common';
-import { User } from 'src/users/users.entity';
+import { Controller, Post, Get, Body, HttpException, UseGuards, Req} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UsersService } from 'src/users/users.service';
 import { AuthPayloadDto } from './dto/auth.dto';
-
+import { LocalGuard } from './guards/local.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { Request } from 'express';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 
 @Controller('auth')
 export class AuthController {
@@ -11,19 +12,19 @@ export class AuthController {
     constructor(private authService: AuthService){}
     
     @Post('login')
-    login(@Body() authPayload: AuthPayloadDto){
-        return this.authService.validateUser(authPayload);
+    @UseGuards(LocalGuard)
+    login(@Req() req: Request){
+        return req.user;
+        
 
     }
 
-
-
-    // constructor(private authService: AuthService){}
-    // @Get('Autenticacion')
-    // autentificar():string{
-    //     return "hola"
-       
-    // }
-    
-    
+    @Get('status')
+    @UseGuards(JwtAuthGuard)
+    status(@Req() req: Request){
+         console.log('Dentro de AuthController status method');
+         console.log(req.user);
+         return req.user;
+        
+    }
 }
